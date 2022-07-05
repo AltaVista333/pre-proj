@@ -3,7 +3,6 @@ package jm.task.core.jdbc.util;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.NoSuchFileException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -15,7 +14,7 @@ public class Util {
   // реализуйте настройку соеденения с БД
 
 
-  public static Connection getConnection()  {
+  public static Connection getConnection() {
     Properties properties = readProps();
     Connection conn = null;
     try {

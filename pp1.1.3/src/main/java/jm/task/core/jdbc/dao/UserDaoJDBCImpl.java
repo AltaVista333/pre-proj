@@ -20,14 +20,14 @@ public class UserDaoJDBCImpl implements UserDao {
   public void createUsersTable() {
     try {
       PreparedStatement statement = connection.prepareStatement("""
-            CREATE TABLE `Users` (
+            CREATE TABLE IF NOT EXISTS `Users` (
                            `id` BIGINT NOT NULL AUTO_INCREMENT,
                            `name` VARCHAR(30) NOT NULL,
                            `last_name` VARCHAR(30) NOT NULL,
                            `age` TINYINT NOT NULL,
                            PRIMARY KEY (`id`));
           """);
-      statement.executeUpdate();
+      statement.execute();
     } catch (SQLException e) {
       throw new RuntimeException("Cannot create table Users");
     }
@@ -35,8 +35,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
   public void dropUsersTable() {
     try {
-      PreparedStatement statement = connection.prepareStatement("DROP TABLE IF EXISTS `USERS`");
-      statement.executeUpdate();
+      PreparedStatement statement = connection.prepareStatement("DROP TABLE IF EXISTS Users");
+      statement.execute();
     } catch (SQLException e) {
       throw new RuntimeException("Cannot drop table Users");
     }
@@ -45,19 +45,19 @@ public class UserDaoJDBCImpl implements UserDao {
   public void saveUser(String name, String lastName, byte age) {
     try {
       PreparedStatement statement = connection.prepareStatement(
-          "INSERT INTO Users (name, lastName, age) values (?,?,?)");
+          "INSERT INTO `Users` (name, last_name, age) values (?,?,?)");
       statement.setString(1, name);
       statement.setString(2, lastName);
-      statement.setByte(3, age);
+      statement.setInt(3, age);
       statement.executeUpdate();
     } catch (SQLException e) {
-      throw new RuntimeException("Cannot save user");
+      e.printStackTrace();
     }
   }
 
   public void removeUserById(long id) {
     try {
-      PreparedStatement statement = connection.prepareStatement("DELETE FROM USERS WHERE `id` = ?");
+      PreparedStatement statement = connection.prepareStatement("DELETE FROM Users WHERE `id` = ?");
       statement.setLong(1, id);
       statement.executeUpdate();
     } catch (SQLException e) {
@@ -71,8 +71,12 @@ public class UserDaoJDBCImpl implements UserDao {
       PreparedStatement statement = connection.prepareStatement("SELECT * from Users");
       ResultSet resultSet = statement.executeQuery();
       while (resultSet.next()) {
-        User user = User.builder().id(resultSet.getLong("id")).age(resultSet.getByte("age"))
-            .name(resultSet.getString("name")).lastName(resultSet.getString("lastName")).build();
+        User user = User.builder()
+            .id(resultSet.getLong("id"))
+            .age((byte) resultSet.getInt("age"))
+            .name(resultSet.getString("name"))
+            .lastName(resultSet.getString("last_name"))
+            .build();
         users.add(user);
       }
     } catch (SQLException e) {
@@ -83,7 +87,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
   public void cleanUsersTable() {
     try {
-      PreparedStatement statement = connection.prepareStatement("TRUNCATE table USERS");
+      PreparedStatement statement = connection.prepareStatement("TRUNCATE table Users");
       statement.executeUpdate();
     } catch (SQLException e) {
       throw new RuntimeException("Cannot clear table");
