@@ -1,15 +1,17 @@
 package jm.task.core.jdbc.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 
 @Table
 @Builder
 @AllArgsConstructor
 public class User {
+
     @Id
     private Long id;
 
@@ -66,11 +68,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", age=" + age +
-            '}';
+        return "User{" + "id=" + id + ", name='" + name + '\'' + ", lastName='"
+                + lastName + '\'' + ", age=" + age + '}';
     }
 }
